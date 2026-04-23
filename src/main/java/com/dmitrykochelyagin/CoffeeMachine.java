@@ -5,28 +5,34 @@ public class CoffeeMachine {
     public static void main(String[] args) {
         Machine machine = new Machine();
         Scanner scanner = new Scanner(System.in);
-        currentState(machine);
-        System.out.println();
-        System.out.println("Write action (buy, fill, take):");
-        switch(scanner.nextLine()) {
-            case("buy"):
-                buyCoffee(scanner, machine);
-                break;
-            case("fill"):
-                fillCoffeeMachine(scanner, machine);
-                break;
-            case("take"):
-                takeMoney(machine);
-                break;
+
+        boolean status = true;
+        while(status) {
+            System.out.println("Write action (buy, fill, take, remaining, exit):");
+            switch(scanner.nextLine()) {
+                case("buy"):
+                    buyCoffee(scanner, machine);
+                    break;
+                case("fill"):
+                    fillCoffeeMachine(scanner, machine);
+                    break;
+                case("take"):
+                    takeMoney(machine);
+                    break;
+                case("remaining"):
+                    currentState(machine);
+                    break;
+                case("exit"):
+                    status = false;
+            }
         }
-        currentState(machine);
     }
 
     public static void buyCoffee(Scanner scanner, Machine machine) {
-        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino:");
-        int choice = scanner.nextInt();
+        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu:");
+        String choice = scanner.nextLine();
         switch(choice) {
-            case(1):
+            case("1"):
                 if (machine.water < 250) {
                     System.out.println("Sorry, not enough water!");
                     return;
@@ -45,7 +51,7 @@ public class CoffeeMachine {
                 machine.money += 4;
                 machine.disposableCups--;
                 break;
-            case(2):
+            case("2"):
                 if (machine.water < 350) {
                     System.out.println("Sorry, not enough water!");
                     return;
@@ -69,7 +75,7 @@ public class CoffeeMachine {
                 machine.money += 7;
                 machine.disposableCups--;
                 break;
-            case(3):
+            case("3"):
                 if (machine.water < 200) {
                     System.out.println("Sorry, not enough water!");
                     return;
@@ -93,18 +99,24 @@ public class CoffeeMachine {
                 machine.money += 6;
                 machine.disposableCups--;
                 break;
+            case("back"):
+                break;
         }
     }
 
     public static void fillCoffeeMachine(Scanner scanner, Machine machine) {
         System.out.println("Write how many ml of water you want to add:");
         machine.water += scanner.nextInt();
+        scanner.nextLine();
         System.out.println("Write how many ml of milk you want to add:");
         machine.milk += scanner.nextInt();
+        scanner.nextLine();
         System.out.println("Write how many grams of coffee beans you want to add:");
         machine.coffeeBeans += scanner.nextInt();
+        scanner.nextLine();
         System.out.println("Write how many disposable cups you want to add:");
         machine.disposableCups += scanner.nextInt();
+        scanner.nextLine();
     }
 
     public static void takeMoney(Machine machine) {
