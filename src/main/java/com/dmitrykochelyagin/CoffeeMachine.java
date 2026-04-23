@@ -1,136 +1,75 @@
 package com.dmitrykochelyagin;
-import java.util.Scanner;
 
 public class CoffeeMachine {
-    public static void main(String[] args) {
-        Machine machine = new Machine();
-        Scanner scanner = new Scanner(System.in);
 
-        boolean status = true;
-        while(status) {
-            System.out.println("Write action (buy, fill, take, remaining, exit):");
-            switch(scanner.nextLine()) {
-                case("buy"):
-                    buyCoffee(scanner, machine);
-                    break;
-                case("fill"):
-                    fillCoffeeMachine(scanner, machine);
-                    break;
-                case("take"):
-                    takeMoney(machine);
-                    break;
-                case("remaining"):
-                    currentState(machine);
-                    break;
-                case("exit"):
-                    status = false;
-            }
+    private int cleanCounter = 0;
+    private int money = 550;
+    private int water = 400;
+    private int milk = 540;
+    private int coffeeBeans = 120;
+    private int cups = 9;
+
+    public String buy(CoffeeType type) {
+        if (!canMake(type)) {
+            return getLackMessage(type);
         }
+
+        water -= type.getWater();
+        milk -= type.getMilk();
+        coffeeBeans -= type.getBeans();
+        money += type.getPrice();
+        cups--;
+        cleanCounter++;
+
+        return "I have enough resources, making you a coffee!";
     }
 
-    public static void buyCoffee(Scanner scanner, Machine machine) {
-        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu:");
-        String choice = scanner.nextLine();
-        switch(choice) {
-            case("1"):
-                if (machine.water < 250) {
-                    System.out.println("Sorry, not enough water!");
-                    return;
-                }
-                if (machine.coffeeBeans < 16) {
-                    System.out.println("Sorry, not enough coffee beans!");
-                    return;
-                }
-                if (machine.disposableCups < 1) {
-                    System.out.println("Sorry, not enough disposable cups!");
-                    return;
-                }
-                System.out.println("I have enough resources, making you a coffee!");
-                machine.water -= 250;
-                machine.coffeeBeans -= 16;
-                machine.money += 4;
-                machine.disposableCups--;
-                break;
-            case("2"):
-                if (machine.water < 350) {
-                    System.out.println("Sorry, not enough water!");
-                    return;
-                }
-                if (machine.milk < 75) {
-                    System.out.println("Sorry, not enough milk!");
-                    return;
-                }
-                if (machine.coffeeBeans < 20) {
-                    System.out.println("Sorry, not enough coffee beans!");
-                    return;
-                }
-                if (machine.disposableCups < 1) {
-                    System.out.println("Sorry, not enough disposable cups!");
-                    return;
-                }
-                System.out.println("I have enough resources, making you a coffee!");
-                machine.water -= 350;
-                machine.milk -= 75;
-                machine.coffeeBeans -= 20;
-                machine.money += 7;
-                machine.disposableCups--;
-                break;
-            case("3"):
-                if (machine.water < 200) {
-                    System.out.println("Sorry, not enough water!");
-                    return;
-                }
-                if (machine.milk < 100) {
-                    System.out.println("Sorry, not enough milk!");
-                    return;
-                }
-                if (machine.coffeeBeans < 12) {
-                    System.out.println("Sorry, not enough coffee beans!");
-                    return;
-                }
-                if (machine.disposableCups < 1) {
-                    System.out.println("Sorry, not enough disposable cups!");
-                    return;
-                }
-                System.out.println("I have enough resources, making you a coffee!");
-                machine.water -= 200;
-                machine.milk -= 100;
-                machine.coffeeBeans -= 12;
-                machine.money += 6;
-                machine.disposableCups--;
-                break;
-            case("back"):
-                break;
-        }
+    public void fill(int water, int milk, int beans, int cups) {
+        this.water += water;
+        this.milk += milk;
+        this.coffeeBeans += beans;
+        this.cups += cups;
     }
 
-    public static void fillCoffeeMachine(Scanner scanner, Machine machine) {
-        System.out.println("Write how many ml of water you want to add:");
-        machine.water += scanner.nextInt();
-        scanner.nextLine();
-        System.out.println("Write how many ml of milk you want to add:");
-        machine.milk += scanner.nextInt();
-        scanner.nextLine();
-        System.out.println("Write how many grams of coffee beans you want to add:");
-        machine.coffeeBeans += scanner.nextInt();
-        scanner.nextLine();
-        System.out.println("Write how many disposable cups you want to add:");
-        machine.disposableCups += scanner.nextInt();
-        scanner.nextLine();
+    public int takeMoney() {
+        int result = money;
+        money = 0;
+        return result;
     }
 
-    public static void takeMoney(Machine machine) {
-        System.out.println("I gave you $" + machine.money);
-        machine.money = 0;
+    public void clean() {
+        cleanCounter = 0;
     }
 
-    public static void currentState(Machine machine) {
-        System.out.println("The coffee machine has:");
-        System.out.println(machine.water + " ml of water");
-        System.out.println(machine.milk + " ml of milk");
-        System.out.println(machine.coffeeBeans + " g of coffee beans");
-        System.out.println(machine.disposableCups + " disposable cups");
-        System.out.println("$" + machine.money + " of money");
+    public boolean needsCleaning() {
+        return cleanCounter >= 10;
+    }
+
+
+    private boolean canMake(CoffeeType type) {
+        return water >= type.getWater()
+                && milk >= type.getMilk()
+                && coffeeBeans >= type.getBeans()
+                && cups >= 1;
+    }
+
+    private String getLackMessage(CoffeeType type) {
+        if (water < type.getWater()) return "Sorry, not enough water!";
+        if (milk < type.getMilk()) return "Sorry, not enough milk!";
+        if (coffeeBeans < type.getBeans()) return "Sorry, not enough coffee beans!";
+        if (cups < 1) return "Sorry, not enough cups!";
+        return "";
+    }
+
+
+    public String getState() {
+        return """
+                The coffee machine has:
+                %d ml of water
+                %d ml of milk
+                %d g of coffee beans
+                %d disposable cups
+                $%d of money
+                """.formatted(water, milk, coffeeBeans, cups, money);
     }
 }
-
