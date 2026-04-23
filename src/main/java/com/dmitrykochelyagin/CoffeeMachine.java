@@ -25,9 +25,9 @@ public class CoffeeMachine {
         if (canCups == cups) {
             System.out.println("Yes, I can make that amount of coffee");
         } else if (canCups < cups) {
-            System.out.printf("No, I can make only %d cups of coffee", canCups);
+            System.out.printf("No, I can make only %d cups of coffee\n", canCups);
         } else {
-            System.out.printf("Yes, I can make that amount of coffee (and even %d more than that)", canCups-cups);
+            System.out.printf("Yes, I can make that amount of coffee (and even %d more than that)\n", canCups-cups);
         }
 
     }
